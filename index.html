@@ -103,7 +103,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     const errorMessage = document.getElementById('error-message');
 
     const users = {
-        'user1': { password: '12345', url: 'user1.html' },
+        'user1': { password: '12345', url: 'ezidigpt-login.html' },
         'user2': { password: '23456', url: 'user2.html' },
         'user3': { password: '34567', url: 'user3.html' },
         'user4': { password: '45678', url: 'user4.html' },
@@ -122,7 +122,7 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
 // زر تسجيل الخروج لمسح البيانات من Local Storage
 function logout() {
     localStorage.removeItem('loggedInUser');
-    window.location.href = 'ezidigpt-login.html'; // إعادة توجيه إلى صفحة تسجيل الدخول
+    window.location.href = 'index.html'; // إعادة توجيه إلى صفحة تسجيل الدخول
 }
 
 </script>
