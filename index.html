@@ -3,127 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تسجيل دخول</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>ChatGPT - واجهة دردشة</title>
+    <style>
+        /* CSS */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .chat-container {
+            width: 90%;
+            max-width: 600px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-box {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .input-container {
+            display: flex;
+            border-top: 1px solid #ddd;
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            outline: none;
+        }
+
+        #send-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-bottom: 15px;
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message.bot {
+            text-align: left;
+            background-color: #e8e8e8;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+    </style>
 </head>
 <body>
-    <div class="login-container"><h1/>
-    EZIDIGPT 1.0    <h2>جات جيبتي ايزيدي</h2>
-        <form id="loginForm">
-            <label for="username">نافي هكا طا بى تسجيل گري:</label>
-            <input type="text" id="username" name="username" required>
-            <label for="password">رمزي طا داي بر:</label>
-            <input type="password" id="password" name="password" required>
-            <button type="submit">درباسي زك ببا</button>
-        </form>
-        <div id="error-message"></div>
+    <!-- HTML -->
+    <div class="chat-container">
+        <div id="chat-box" class="chat-box"></div>
+        <div class="input-container">
+            <input type="text" id="user-input" placeholder="اكتب سؤالك هنا..." autocomplete="off">
+            <button id="send-btn">إرسال</button>
+        </div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        // JavaScript
+        const apiKey = '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';
+
+        document.getElementById("send-btn").addEventListener("click", async () => {
+            const userInput = document.getElementById("user-input").value.trim();
+            if (userInput === "") return;
+
+            // عرض الرسالة المرسلة من المستخدم
+            appendMessage(userInput, "user");
+
+            // إرسال الطلب إلى OpenAI API
+            const botResponse = await getBotResponse(userInput);
+            appendMessage(botResponse, "bot");
+
+            // مسح حقل الإدخال
+            document.getElementById("user-input").value = "";
+        });
+
+        function appendMessage(text, sender) {
+            const chatBox = document.getElementById("chat-box");
+            const messageDiv = document.createElement("div");
+            messageDiv.classList.add("message", sender);
+            messageDiv.innerText = text;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        async function getBotResponse(userInput) {
+            const response = await fetch("https://api.openai.com/v1/completions", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: "text-davinci-003",
+                    prompt: userInput,
+                    max_tokens: 100,
+                    temperature: 0.7
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("Error:", errorText);
+                return "حدث خطأ، يرجى المحاولة لاحقًا.";
+            }
+
+            const data = await response.json();
+            return data.choices[0].text.trim();
+        }
+    </script>
 </body>
 </html>
-
-<style/>
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-}
-
-.login-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    margin-bottom: 50px;
-}
-
-label {
-    display: block;
-    margin-bottom: 5px;
-}
-
-input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 44px;
-    cursor: pointer;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-#error-message {
-    color: red;
-    margin-top: 10px;
-}
-</style>
-
-<script/>
-document.addEventListener('DOMContentLoaded', function() {
-    // تحقق من حالة تسجيل الدخول عند تحميل الصفحة
-    const loggedInUser = localStorage.getItem('loggedInUser');
-    const users = {
-        'user1': { password: '12345', url: 'ezidigpt-login.html' },
-        'user2': { password: '23456', url: 'user2.html' },
-        'user3': { password: '34567', url: 'user3.html' },
-        'user4': { password: '45678', url: 'user4.html' },
-        'user5': { password: '56789', url: 'user5.html' }
-    };
-
-    if (loggedInUser && users[loggedInUser]) {
-        window.location.href = users[loggedInUser].url;
-    }
-});
-
-document.getElementById('loginForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    const errorMessage = document.getElementById('error-message');
-
-    const users = {
-        'user1': { password: '12345', url: 'ezidigpt-login.html' },
-        'user2': { password: '23456', url: 'user2.html' },
-        'user3': { password: '34567', url: 'user3.html' },
-        'user4': { password: '45678', url: 'user4.html' },
-        'user5': { password: '56789', url: 'user5.html' }
-    };
-
-    if (users[username] && users[username].password === password) {
-        // احفظ حالة تسجيل الدخول في Local Storage
-        localStorage.setItem('loggedInUser', username);
-        window.location.href = users[username].url;
-    } else {
-        errorMessage.textContent = 'اسم المستخدم أو رمز المرور غير صحيح.';
-    }
-});
-
-// زر تسجيل الخروج لمسح البيانات من Local Storage
-function logout() {
-    localStorage.removeItem('loggedInUser');
-    window.location.href = 'index.html'; // إعادة توجيه إلى صفحة تسجيل الدخول
-}
-
-</script>
-
